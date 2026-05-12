@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eKonkursi - Transparenca e Konkurseve Publike</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial, sans-serif}
+    body{background:#f4f7fb;color:#1f2937}
+    header{background:#0b2f5b;color:white;padding:18px 8%;display:flex;justify-content:space-between;align-items:center}
+    .logo{font-size:26px;font-weight:bold}
+    .logo span{color:#22c55e}
+    nav a{color:white;text-decoration:none;margin-left:22px;font-weight:600}
+    .hero{padding:70px 8%;display:grid;grid-template-columns:1.2fr .8fr;gap:35px;align-items:center;background:linear-gradient(135deg,#0b2f5b,#125c9c)}
+    .hero h1{color:white;font-size:46px;margin-bottom:18px}
+    .hero p{color:#e5eef8;font-size:18px;line-height:1.6;margin-bottom:25px}
+    .btn{background:#22c55e;color:white;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block}
+    .card{background:white;border-radius:18px;padding:25px;box-shadow:0 10px 25px rgba(0,0,0,.12)}
+    .login input,.login select{width:100%;padding:13px;margin:9px 0;border:1px solid #d1d5db;border-radius:8px}
+    .login button{width:100%;padding:13px;background:#0b2f5b;color:white;border:0;border-radius:8px;font-weight:bold;margin-top:8px}
+    section{padding:55px 8%}
+    h2{font-size:30px;color:#0b2f5b;margin-bottom:25px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .stat{background:white;padding:25px;border-radius:14px;box-shadow:0 5px 15px rgba(0,0,0,.08)}
+    .stat h3{font-size:34px;color:#0b2f5b}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .feature{background:white;padding:25px;border-radius:14px;box-shadow:0 5px 15px rgba(0,0,0,.08)}
+    .feature h3{color:#0b2f5b;margin-bottom:10px}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.08)}
+    th,td{padding:15px;text-align:left;border-bottom:1px solid #e5e7eb}
+    th{background:#0b2f5b;color:white}
+    .status{padding:6px 10px;border-radius:20px;font-weight:bold;font-size:13px}
+    .green{background:#dcfce7;color:#166534}
+    .yellow{background:#fef9c3;color:#854d0e}
+    .blue{background:#dbeafe;color:#1d4ed8}
+    footer{background:#0b2f5b;color:white;text-align:center;padding:25px}
+    @media(max-width:850px){
+      .hero{grid-template-columns:1fr}
+      .stats,.grid{grid-template-columns:1fr}
+      nav{display:none}
+      .hero h1{font-size:34px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">e<span>Konkursi</span></div>
+  <nav>
+    <a href="#konkurset">Konkurset</a>
+    <a href="#rezultatet">Rezultatet</a>
+    <a href="#ankesat">Ankesat</a>
+    <a href="#login">Login</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div>
+    <h1>eKonkursi</h1>
+    <p>
+      Platformë digjitale për transparencën e konkurseve publike në kuadër të SIMBNJ.
+      Kandidatët mund të aplikojnë online, të përcjellin statusin, të shohin rezultatet
+      dhe të paraqesin ankesa në mënyrë elektronike.
+    </p>
+    <a class="btn" href="#konkurset">Shiko Konkurset</a>
+  </div>
+
+  <div class="card login" id="login">
+    <h2>Hyr në Platformë</h2>
+    <input type="text" placeholder="Email ose ID e aplikimit">
+    <input type="password" placeholder="Fjalëkalimi">
+    <select>
+      <option>Kandidat</option>
+      <option>Admin</option>
+      <option>Komision</option>
+    </select>
+    <button>Login</button>
+  </div>
+</div>
+
+<section>
+  <h2>Dashboard Statistikor</h2>
+  <div class="stats">
+    <div class="stat"><h3>12</h3><p>Konkurse aktive</p></div>
+    <div class="stat"><h3>486</h3><p>Aplikantë</p></div>
+    <div class="stat"><h3>74</h3><p>Kandidatë të pranuar</p></div>
+    <div class="stat"><h3>18</h3><p>Ankesa aktive</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Funksionet Kryesore</h2>
+  <div class="grid">
+    <div class="feature">
+      <h3>Aplikim Online</h3>
+      <p>Kandidati aplikon dhe ngarkon dokumentet PDF në mënyrë digjitale.</p>
+    </div>
+    <div class="feature">
+      <h3>Renditje Automatike</h3>
+      <p>Sistemi llogarit pikët dhe krijon listën preliminare/finale.</p>
+    </div>
+    <div class="feature">
+      <h3>Ankesa Online</h3>
+      <p>Kandidati paraqet ankesë dhe përcjell statusin e saj.</p>
+    </div>
+  </div>
+</section>
+
+<section id="konkurset">
+  <h2>Konkurset Publike</h2>
+  <table>
+    <tr>
+      <th>Pozita</th>
+      <th>Institucioni</th>
+      <th>Afati</th>
+      <th>Statusi</th>
+    </tr>
+    <tr>
+      <td>Zyrtar i Burimeve Njerëzore</td>
+      <td>Ministria X</td>
+      <td>20 Maj 2026</td>
+      <td><span class="status green">Aktiv</span></td>
+    </tr>
+    <tr>
+      <td>Asistent Administrativ</td>
+      <td>Komuna Y</td>
+      <td>25 Maj 2026</td>
+      <td><span class="status yellow">Në shqyrtim</span></td>
+    </tr>
+    <tr>
+      <td>Zyrtar Financiar</td>
+      <td>Agjencia Z</td>
+      <td>30 Maj 2026</td>
+      <td><span class="status blue">Publikuar</span></td>
+    </tr>
+  </table>
+</section>
+
+<section id="rezultatet">
+  <h2>Rezultatet e Kandidatëve</h2>
+  <table>
+    <tr>
+      <th>Kodi i Kandidatit</th>
+      <th>Testi</th>
+      <th>Intervista</th>
+      <th>Totali</th>
+      <th>Statusi</th>
+    </tr>
+    <tr>
+      <td>K-1025</td>
+      <td>62</td>
+      <td>28</td>
+      <td>90</td>
+      <td><span class="status green">Kaloi</span></td>
+    </tr>
+    <tr>
+      <td>K-1041</td>
+      <td>55</td>
+      <td>24</td>
+      <td>79</td>
+      <td><span class="status yellow">Në pritje</span></td>
+    </tr>
+  </table>
+</section>
+
+<section id="ankesat">
+  <h2>Siguria dhe Transparenca</h2>
+  <div class="grid">
+    <div class="feature"><h3>Audit Trail</h3><p>Çdo ndryshim ruhet: kush, kur dhe çka ka ndryshuar.</p></div>
+    <div class="feature"><h3>Mbrojtje e të Dhënave</h3><p>Kandidati sheh vetëm të dhënat e veta personale.</p></div>
+    <div class="feature"><h3>Raporte</h3><p>Gjenerohen raporte statistikore për institucionet dhe publikun.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>eKonkursi – Transparencë. Meritë. Besim.</p>
+</footer>
+
+</body>
+</html>
