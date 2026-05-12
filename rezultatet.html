@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="sq" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rezultatet – eKonkursi</title>
+  <link rel="stylesheet" href="css/main.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .my-result-banner{background:linear-gradient(135deg,#0b2f5b,#125c9c);border-radius:var(--radius);padding:28px;color:white;margin-bottom:28px;display:flex;align-items:center;gap:24px}
+    .result-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;flex-shrink:0}
+    .my-result-banner h2{font-size:22px;font-weight:700}
+    .my-result-banner p{opacity:0.8;font-size:14px;margin-top:4px}
+    .score-bars{margin-top:20px}
+    .score-bar-item{margin-bottom:16px}
+    .score-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;font-weight:600}
+    .score-bar-track{height:10px;background:var(--bg2);border-radius:5px;overflow:hidden}
+    .score-bar-fill{height:100%;border-radius:5px;transition:width 1.2s ease}
+    .score-bar-fill.blue{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+    .score-bar-fill.green{background:linear-gradient(90deg,#22c55e,#4ade80)}
+    .score-bar-fill.purple{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+    .rank-card{background:var(--card);border-radius:var(--radius);padding:24px;border:1px solid var(--border);text-align:center}
+    .rank-number{font-size:52px;font-weight:800;color:var(--primary)}
+    [data-theme="dark"] .rank-number{color:var(--primary-light)}
+    .rank-label{color:var(--text2);font-size:14px;margin-top:4px}
+    .rank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+    .sorter{cursor:pointer;user-select:none}
+    .sorter:hover{color:var(--accent)}
+    .sort-asc::after{content:' ↑'}
+    .sort-desc::after{content:' ↓'}
+    @media(max-width:700px){.rank-grid{grid-template-columns:1fr 1fr}.my-result-banner{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header class="header">
+  <a href="index.html" class="logo">e<span>Konkursi</span></a>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="konkurset.html">Konkurset</a>
+    <a href="rezultatet.html" class="active">Rezultatet</a>
+    <a href="ankesat.html">Ankesat</a>
+  </nav>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+      <div class="sidebar-name" id="sidebarName">Kandidat</div>
+      <div class="sidebar-role" id="sidebarRole">Kandidat</div>
+    </div>
+    <hr class="sidebar-divider"/>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html"><span class="icon">🏠</span> Dashboard</a>
+      <a href="konkurset.html"><span class="icon">📋</span> Konkurset</a>
+      <a href="apliko.html"><span class="icon">✍️</span> Apliko</a>
+      <hr class="sidebar-divider"/>
+      <a href="rezultatet.html" class="active"><span class="icon">🏆</span> Rezultatet</a>
+      <a href="ankesat.html"><span class="icon">⚖️</span> Ankesat</a>
+      <hr class="sidebar-divider"/>
+      <a href="index.html" id="logoutBtn"><span class="icon">🚪</span> Dilni</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div style="margin-bottom:24px">
+      <h1 class="section-title">🏆 Rezultatet e Kandidatëve</h1>
+      <p class="section-subtitle">Lista e pikëve dhe renditja pas testit dhe intervistës</p>
+    </div>
+
+    <!-- MY RESULT BANNER -->
+    <div class="my-result-banner" id="myBanner">
+      <div class="result-avatar" id="bannerAvatar">?</div>
+      <div style="flex:1">
+        <h2 id="bannerName">Rezultati Juaj</h2>
+        <p id="bannerKoncurs">IT Specialist – KRPP</p>
+        <div class="score-bars" style="margin-top:16px;max-width:400px">
+          <div class="score-bar-item">
+            <div class="score-bar-label"><span>🧠 Testi</span><span id="barTestPct">72 pikë</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill blue" id="barTest" style="width:0%"></div></div>
+          </div>
+          <div class="score-bar-item">
+            <div class="score-bar-label"><span>🎤 Intervista</span><span id="barIntPct">31 pikë</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill green" id="barInt" style="width:0%"></div></div>
+          </div>
+          <div class="score-bar-item">
+            <div class="score-bar-label"><span>📊 Totali</span><span id="barTotPct">103 pikë</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill purple" id="barTot" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANK GRID -->
+    <div class="rank-grid">
+      <div class="rank-card">
+        <div class="rank-number" id="rankVendi">1</div>
+        <div class="rank-label">🏅 Vendi në listë</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-number" id="rankTotal">103</div>
+        <div class="rank-label">📊 Pikë totale</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-number" id="rankStatus" style="font-size:32px">✅</div>
+        <div class="rank-label">🎯 Statusi</div>
+      </div>
+    </div>
+
+    <!-- TABLE + CHART LAYOUT -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+      <!-- TABLE -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📋 Lista e Plotë e Kandidatëve</span>
+          <div class="search-bar" style="margin:0">
+            <input class="search-input" type="text" id="searchRez" placeholder="Kërko kod..." style="min-width:160px" oninput="filterRez()"/>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table id="rezTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Kodi</th>
+                <th class="sorter" onclick="sortRez('pikaTesti')">Testi</th>
+                <th class="sorter" onclick="sortRez('pikaIntervistes')">Intervista</th>
+                <th class="sorter sort-desc" onclick="sortRez('totali')" id="sortTotali">Totali</th>
+                <th>Statusi</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rezBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CHART -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">📊 Krahasimi Visual</span></div>
+        <div class="card-body">
+          <div class="chart-container" style="height:220px"><canvas id="rezChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="alert alert-info" style="margin-top:20px">
+      ℹ️ Rezultatet janë anonimi. Vetëm kodi i kandidatit është i dukshëm. Nëse keni pyetje, paraqisni <a href="ankesat.html" style="color:var(--primary-light);font-weight:700">ankesë elektronike</a>.
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+let rezData = DataAPI.getRezultatet();
+let sortCol = 'totali', sortDir = -1;
+
+function filterRez() {
+  const q = document.getElementById('searchRez').value.toLowerCase();
+  rezData = DataAPI.getRezultatet().filter(r => r.kodi.toLowerCase().includes(q) || r.emri.toLowerCase().includes(q));
+  renderRez();
+}
+
+function sortRez(col) {
+  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = -1; }
+  renderRez();
+}
+
+function renderRez() {
+  const user = Auth.getUser();
+  const myCode = user?.code;
+  const sorted = [...rezData].sort((a,b) => (a[sortCol] - b[sortCol]) * sortDir);
+  document.getElementById('rezBody').innerHTML = sorted.map((r, i) => {
+    const isMe = r.kodi === myCode;
+    return `<tr style="${isMe ? 'background:rgba(34,197,94,0.08);font-weight:700' : ''}">
+      <td>${i+1}</td>
+      <td>${r.kodi} ${isMe ? '<span class="badge badge-green">Ju</span>' : ''}</td>
+      <td>${r.pikaTesti}</td>
+      <td>${r.pikaIntervistes}</td>
+      <td><strong>${r.totali}</strong></td>
+      <td>${statusBadge(r.statusi)}</td>
+      <td>${isMe && r.statusi !== 'kaloi' ? `<a href="ankesat.html" class="btn btn-sm btn-danger">⚖️ Anko</a>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function initChart() {
+  const labels = rezData.map(r => r.kodi);
+  const test   = rezData.map(r => r.pikaTesti);
+  const inter  = rezData.map(r => r.pikaIntervistes);
+  const ctx = document.getElementById('rezChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Testi', data: test, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 6 },
+        { label: 'Intervista', data: inter, backgroundColor: 'rgba(34,197,94,0.7)', borderRadius: 6 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: { x: { stacked: false }, y: { beginAtZero: true } }
+    }
+  });
+}
+
+function initMyBanner() {
+  const user = Auth.getUser();
+  const myCode = user?.code;
+  if (!myCode) { document.getElementById('myBanner').style.display='none'; return; }
+  const myRez = rezData.find(r => r.kodi === myCode);
+  if (!myRez) { document.getElementById('myBanner').style.display='none'; return; }
+
+  document.getElementById('bannerAvatar').textContent = user.name.charAt(0);
+  document.getElementById('bannerName').textContent = user.name;
+  document.getElementById('rankVendi').textContent = myRez.vendi;
+  document.getElementById('rankTotal').textContent = myRez.totali;
+  document.getElementById('rankStatus').textContent = myRez.statusi === 'kaloi' ? '✅ Kaloi' : myRez.statusi === 'refuzuar' ? '❌ Refuzuar' : '⏳ Pritje';
+
+  document.getElementById('barTestPct').textContent = myRez.pikaTesti + ' pikë';
+  document.getElementById('barIntPct').textContent  = myRez.pikaIntervistes + ' pikë';
+  document.getElementById('barTotPct').textContent  = myRez.totali + ' pikë';
+
+  setTimeout(() => {
+    document.getElementById('barTest').style.width = (myRez.pikaTesti / 100 * 100) + '%';
+    document.getElementById('barInt').style.width  = (myRez.pikaIntervistes / 40 * 100) + '%';
+    document.getElementById('barTot').style.width  = (myRez.totali / 140 * 100) + '%';
+  }, 400);
+}
+
+renderRez();
+initChart();
+initMyBanner();
+</script>
+</body>
+</html>

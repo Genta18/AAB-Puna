@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="sq" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ankesat – eKonkursi</title>
+  <link rel="stylesheet" href="css/main.css"/>
+  <style>
+    .ankesa-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:22px;margin-bottom:16px;transition:var(--transition)}
+    .ankesa-card:hover{box-shadow:var(--shadow-lg)}
+    .ankesa-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+    .ankesa-id{font-size:12px;color:var(--text2);font-weight:600}
+    .ankesa-tema{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+    .ankesa-meta{font-size:13px;color:var(--text2);margin-bottom:14px}
+    .ankesa-desc{font-size:14px;color:var(--text);line-height:1.6;background:var(--bg2);padding:12px;border-radius:var(--radius-sm)}
+    .two-col{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+    .status-tracker{display:flex;flex-direction:column;gap:0}
+    .tracker-step{display:flex;align-items:flex-start;gap:14px;padding-bottom:20px;position:relative}
+    .tracker-step:not(:last-child)::after{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--border)}
+    .tracker-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;z-index:1}
+    .tracker-dot.done{background:var(--accent);color:white}
+    .tracker-dot.active{background:var(--primary-light);color:white}
+    [data-theme="dark"] .tracker-dot.active{background:#3b82f6}
+    .tracker-dot.pending{background:var(--bg2);color:var(--text2);border:2px solid var(--border)}
+    .tracker-content h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .tracker-content p{font-size:12px;color:var(--text2)}
+    .empty-ankesat{text-align:center;padding:48px 20px;color:var(--text2)}
+    @media(max-width:900px){.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header class="header">
+  <a href="index.html" class="logo">e<span>Konkursi</span></a>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="konkurset.html">Konkurset</a>
+    <a href="rezultatet.html">Rezultatet</a>
+    <a href="ankesat.html" class="active">Ankesat</a>
+  </nav>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+      <div class="sidebar-name" id="sidebarName">Kandidat</div>
+      <div class="sidebar-role" id="sidebarRole">Kandidat</div>
+    </div>
+    <hr class="sidebar-divider"/>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html"><span class="icon">🏠</span> Dashboard</a>
+      <a href="konkurset.html"><span class="icon">📋</span> Konkurset</a>
+      <a href="apliko.html"><span class="icon">✍️</span> Apliko</a>
+      <hr class="sidebar-divider"/>
+      <a href="rezultatet.html"><span class="icon">🏆</span> Rezultatet</a>
+      <a href="ankesat.html" class="active"><span class="icon">⚖️</span> Ankesat</a>
+      <hr class="sidebar-divider"/>
+      <a href="index.html" id="logoutBtn"><span class="icon">🚪</span> Dilni</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:28px">
+      <div>
+        <h1 class="section-title">⚖️ Sistemi i Ankesave</h1>
+        <p class="section-subtitle">Paraqit dhe përcill ankesat tuaja elektronike</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modalAnkese')">+ Paraqit Ankesë</button>
+    </div>
+
+    <div class="alert alert-info">
+      ℹ️ Ankesat mund të paraqiten brenda <strong>5 ditëve pune</strong> nga publikimi i rezultateve. Komisioni i shqyrton brenda <strong>10 ditëve</strong>.
+    </div>
+
+    <div class="two-col" style="margin-top:20px">
+      <!-- LISTA E ANKESAVE -->
+      <div>
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">Ankesat e Mia</h3>
+        <div id="ankesatList">
+          <p style="color:var(--text2);font-size:14px">Duke ngarkuar...</p>
+        </div>
+      </div>
+
+      <!-- STATUS TRACKER -->
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">📍 Procesi i Ankesës</span></div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Si funksionon procesi i shqyrtimit të ankesave:</p>
+            <div class="status-tracker">
+              <div class="tracker-step">
+                <div class="tracker-dot done">✅</div>
+                <div class="tracker-content">
+                  <h4>Paraqitja e Ankesës</h4>
+                  <p>Kandidati dërgon ankesën elektronikisht me arsyetim.</p>
+                </div>
+              </div>
+              <div class="tracker-step">
+                <div class="tracker-dot done">✅</div>
+                <div class="tracker-content">
+                  <h4>Pranimi & Regjistrimi</h4>
+                  <p>Sistemi regjistron dhe cakton një numër unik ankese.</p>
+                </div>
+              </div>
+              <div class="tracker-step">
+                <div class="tracker-dot active">⏳</div>
+                <div class="tracker-content">
+                  <h4>Shqyrtimi nga Komisioni</h4>
+                  <p>Komisioni shqyrton ankesën brenda 10 ditëve pune.</p>
+                </div>
+              </div>
+              <div class="tracker-step">
+                <div class="tracker-dot pending">4</div>
+                <div class="tracker-content">
+                  <h4>Vendimi</h4>
+                  <p>Komisioni lëshon vendim të arsyetuar me shkrim.</p>
+                </div>
+              </div>
+              <div class="tracker-step">
+                <div class="tracker-dot pending">5</div>
+                <div class="tracker-content">
+                  <h4>Njoftimi i Kandidatit</h4>
+                  <p>Kandidati njoftohet me email dhe në platformë.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">📊 Statistikat e Ankesave</span></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:14px;color:var(--text2)">Ankesat e mia</span>
+                <span id="statMy" style="font-weight:700;font-size:16px">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:14px;color:var(--text2)">Në shqyrtim</span>
+                <span style="font-weight:700;font-size:16px;color:#f59e0b">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:14px;color:var(--text2)">Të zgjidhura</span>
+                <span style="font-weight:700;font-size:16px;color:#22c55e">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL ANKESE -->
+<div class="modal-overlay" id="modalAnkese">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2 class="modal-title">⚖️ Paraqit Ankesë të Re</h2>
+      <button class="modal-close" onclick="closeModal('modalAnkese')">✕</button>
+    </div>
+
+    <div class="alert alert-warning">⚠️ Sigurohuni se ankesa juaj është e arsyetuar dhe mbështetet në prova konkrete.</div>
+
+    <div class="form-group">
+      <label>Kategoria e Ankesës <span style="color:#ef4444">*</span></label>
+      <select class="form-control" id="ankesaKat">
+        <option value="">— Zgjidh kategorinë —</option>
+        <option>Rezultate - Pikë të gabuara</option>
+        <option>Procedura - Shkelje procedurash</option>
+        <option>Diskriminim</option>
+        <option>Dokumente - Vlerësim i padrejtë</option>
+        <option>Tjetër</option>
+      </select>
+      <div class="error-msg" id="ankesaKatErr">Zgjidhni kategorinë</div>
+    </div>
+
+    <div class="form-group">
+      <label>Tema e Ankesës <span style="color:#ef4444">*</span></label>
+      <input class="form-control" type="text" id="ankesaTema" placeholder="p.sh. Gabim në llogaritjen e pikëve të testit"/>
+      <div class="error-msg" id="ankesaTemaErr">Tema është e detyrueshme</div>
+    </div>
+
+    <div class="form-group">
+      <label>Konkursi i Lidhur</label>
+      <select class="form-control" id="ankesaKonkurs">
+        <option value="">— Zgjidh konkursin (opsionale) —</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Përshkrimi i Ankesës <span style="color:#ef4444">*</span></label>
+      <textarea class="form-control" id="ankesaDesc" rows="5" placeholder="Shpjegoni qartë arsyen e ankesës, me fakte dhe argumente konkrete..."></textarea>
+      <div class="error-msg" id="ankesaDescErr">Përshkrimi është i detyrueshëm</div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-top:8px">
+      <button onclick="closeModal('modalAnkese')" class="btn" style="background:var(--bg2);color:var(--text)">Anulo</button>
+      <button onclick="submitAnkese()" class="btn btn-primary">🚀 Dërgo Ankesën</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+function renderAnkesat() {
+  const user = Auth.getUser();
+  const userId = user?.id || 1;
+  const ankesat = DataAPI.getAnkesat(userId);
+  const listEl  = document.getElementById('ankesatList');
+
+  document.getElementById('statMy').textContent = ankesat.length;
+
+  if (ankesat.length === 0) {
+    listEl.innerHTML = `<div class="empty-ankesat">
+      <div style="font-size:52px;margin-bottom:12px">⚖️</div>
+      <h3 style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">Nuk keni ankesa</h3>
+      <p>Nëse mendoni se ka pasur padrejtësi, paraqisni ankesë elektronike.</p>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="openModal('modalAnkese')">+ Paraqit Ankesë</button>
+    </div>`;
+    return;
+  }
+
+  listEl.innerHTML = ankesat.map(a => `
+    <div class="ankesa-card">
+      <div class="ankesa-header">
+        <span class="ankesa-id">Ankesa #${a.id} · ${a.kategoria}</span>
+        ${statusBadge(a.statusi)}
+      </div>
+      <div class="ankesa-tema">${a.tema}</div>
+      <div class="ankesa-meta">📅 Paraqitur: ${formatDate(a.data)}</div>
+      <div class="ankesa-desc">${a.pershkrimi}</div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        ${a.statusi === 'shqyrtim' ? `<span class="badge badge-yellow">⏳ Pret vendim të komisionit</span>` : ''}
+        ${a.statusi === 'zgjidhur' ? `<span class="badge badge-green">✅ E zgjidhur</span>` : ''}
+        ${a.statusi === 'refuzuar' ? `<span class="badge badge-red">❌ E refuzuar</span>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function populateKonkursSel() {
+  const list = DataAPI.getKonkurset({});
+  const sel  = document.getElementById('ankesaKonkurs');
+  list.forEach(k => sel.innerHTML += `<option value="${k.id}">${k.pozita} – ${k.institucioni}</option>`);
+}
+
+function submitAnkese() {
+  const kat  = document.getElementById('ankesaKat').value;
+  const tema = document.getElementById('ankesaTema').value.trim();
+  const desc = document.getElementById('ankesaDesc').value.trim();
+  let ok = true;
+
+  if (!kat)  { document.getElementById('ankesaKatErr').style.display='block';  ok=false; }
+  if (!tema) { document.getElementById('ankesaTemaErr').style.display='block'; ok=false; }
+  if (!desc) { document.getElementById('ankesaDescErr').style.display='block'; ok=false; }
+
+  if (!ok) return;
+
+  const user = Auth.getUser();
+  DataAPI.addAnkese({ kandidatId: user?.id||1, tema, kategoria: kat, pershkrimi: desc });
+  closeModal('modalAnkese');
+  renderAnkesat();
+  showToast('Ankesa juaj u regjistrua me sukses!', 'success');
+
+  // Reset form
+  document.getElementById('ankesaKat').value  = '';
+  document.getElementById('ankesaTema').value = '';
+  document.getElementById('ankesaDesc').value = '';
+}
+
+renderAnkesat();
+populateKonkursSel();
+</script>
+</body>
+</html>
