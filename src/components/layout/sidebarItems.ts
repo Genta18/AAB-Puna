@@ -21,5 +21,6 @@ export const adminSidebar: SidebarItemData[] = [
   { href: "/admin", labelKey: "dashboard" },
   { href: "/admin/konkurset", labelKey: "competitions" },
   { href: "/admin/aplikimet", labelKey: "applications" },
+  { href: "/admin/rezultatet", labelKey: "results" },
   { href: "/admin/ankesat", labelKey: "complaints" },
 ];

@@ -14,6 +14,7 @@ export default function AdminKonkursetPage() {
   const { t } = useLanguage();
   const [list, setList] = useState<Konkurs[]>([]);
   const [open, setOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
   const [pozita, setPozita] = useState("");
   const [inst, setInst] = useState("");
   const [kat, setKat] = useState("Sherbim Civil");
@@ -39,7 +40,8 @@ export default function AdminKonkursetPage() {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("konkurset").insert({
+    
+    const payload = {
       pozita,
       institucioni: inst,
       kategoria: kat,
@@ -48,15 +50,57 @@ export default function AdminKonkursetPage() {
       paga,
       pershkrimi: desc,
       statusi: "aktiv",
-    });
+    };
+
+    let error;
+    if (editId) {
+      const { error: updateError } = await supabase.from("konkurset").update(payload).eq("id", editId);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase.from("konkurset").insert(payload);
+      error = insertError;
+    }
+
     setSubmitting(false);
     if (error) {
       show(error.message, "error");
       return;
     }
-    show(t("competition_added"), "success");
+    show(editId ? "Konkursi u përditësua!" : t("competition_added"), "success");
+    closeModal();
+    load();
+  };
+
+  const closeModal = () => {
     setOpen(false);
+    setEditId(null);
     setPozita(""); setInst(""); setAfati(""); setVende("1"); setPaga(""); setDesc("");
+  };
+
+  const openEdit = (k: Konkurs) => {
+    setEditId(k.id);
+    setPozita(k.pozita);
+    setInst(k.institucioni);
+    setKat(k.kategoria);
+    setAfati(k.afati);
+    setVende(k.vende?.toString() || "1");
+    setPaga(k.paga || "");
+    setDesc(k.pershkrimi || "");
+    setOpen(true);
+  };
+
+  const addDummyData = async () => {
+    setSubmitting(true);
+    const dummies = [
+      { pozita: "Zyrtar Ligjor", institucioni: "Ministria e Drejtësisë", kategoria: "Sherbim Civil", afati: "2026-10-10", vende: 2, paga: "650", pershkrimi: "Kërkohet zyrtar ligjor me përvojë.", statusi: "aktiv" },
+      { pozita: "Zhvillues Softueri", institucioni: "ASHNA", kategoria: "Teknologji", afati: "2026-06-15", vende: 3, paga: "1200", pershkrimi: "Zhvillues full-stack me njohuri në React dhe Node.js", statusi: "aktiv" },
+      { pozita: "Inspektor Tregu", institucioni: "MTI", kategoria: "Inspektim", afati: "2026-05-30", vende: 5, paga: "600", pershkrimi: "Inspektime rutinore në terren.", statusi: "aktiv" },
+    ];
+    for (const d of dummies) {
+      await supabase.from("konkurset").insert(d);
+    }
+    setSubmitting(false);
+    show("U shtuan disa konkurse!", "success");
     load();
   };
 
@@ -78,7 +122,10 @@ export default function AdminKonkursetPage() {
           <h1 className="section-title">{t("manage_competitions")}</h1>
           <p className="section-subtitle">{t("manage_competitions_subtitle")}</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setOpen(true)}>{t("new_competition")}</button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button className="btn btn-neutral" onClick={addDummyData} disabled={submitting}>Shto Disa Test</button>
+          <button className="btn btn-primary" onClick={() => { setEditId(null); setOpen(true); }}>{t("new_competition")}</button>
+        </div>
       </div>
 
       <div className="card" style={{ marginBottom: 30 }}>
@@ -105,7 +152,10 @@ export default function AdminKonkursetPage() {
                   <td>{k.aplikime}</td>
                   <td><StatusBadge statusi={k.statusi} /></td>
                   <td>
-                    <button className="btn btn-sm btn-danger" onClick={() => del(k.id)}>{t("delete")}</button>
+                    <div style={{ display: "flex", gap: "5px" }}>
+                      <button className="btn btn-sm btn-neutral" onClick={() => openEdit(k)}>Edito</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => del(k.id)}>{t("delete")}</button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -114,7 +164,7 @@ export default function AdminKonkursetPage() {
         </div>
       </div>
 
-      <Modal open={open} onClose={() => setOpen(false)} title={t("add_new_competition")}>
+      <Modal open={open} onClose={closeModal} title={editId ? "Edito Konkursin" : t("add_new_competition")}>
         <div className="form-group">
           <label>{t("position")}</label>
           <input className="form-control" value={pozita} onChange={(e) => setPozita(e.target.value)} />
@@ -158,7 +208,7 @@ export default function AdminKonkursetPage() {
           <button className="btn btn-primary" style={{ flex: 1, justifyContent: "center" }} disabled={submitting} onClick={save}>
             {submitting ? t("saving") : t("save_competition")}
           </button>
-          <button className="btn btn-neutral" style={{ flex: 1, justifyContent: "center" }} onClick={() => setOpen(false)}>
+          <button className="btn btn-neutral" style={{ flex: 1, justifyContent: "center" }} onClick={closeModal}>
             {t("cancel")}
           </button>
         </div>

@@ -135,9 +135,9 @@ export function ChatBot() {
         className="chat-button"
         onClick={() => setOpen((o) => !o)}
         aria-label="Open chat"
-        style={{ fontSize: 15, fontWeight: 700, letterSpacing: 0.5 }}
+        style={{ fontSize: 24, fontWeight: 700, letterSpacing: 0.5 }}
       >
-        Chat
+        ❓
       </button>
       <div className={`chat-window ${open ? "active" : ""}`}>
         <div className="chat-header">
